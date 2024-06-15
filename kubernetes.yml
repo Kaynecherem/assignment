@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempconverter-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tempconverter-db
+  template:
+    metadata:
+      labels:
+        app: tempconverter-db
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: tempconverter-db
+        image: docker.io/mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "rpassword"
+        - name: MYSQL_DATABASE
+          value: "tcdb"
+        - name: MYSQL_USER
+          value: "user"
+        - name: MYSQL_PASSWORD
+          value: "password"
+        ports:
+        - containerPort: 3306
+          name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempconverter-db
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: tempconverter-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempconverter-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tempconverter-frontend
+  template:
+    metadata:
+      labels:
+        app: tempconverter-frontend
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: tempconverter-frontend
+        image: docker.io/kaynecherem/tempconverter:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_USER
+          value: "user"
+        - name: DB_PASS
+          value: "password"
+        - name: DB_HOST
+          value: "tempconverter-db"
+        - name: DB_NAME
+          value: "tcdb"
+        - name: STUDENT
+          value: "Kalu Chinecherem"
+        - name: COLLEGE
+          value: "Algebra University"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempconverter-frontend
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: tempconverter-frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempconverter-frontend-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tempconverter-frontend-dev
+  template:
+    metadata:
+      labels:
+        app: tempconverter-frontend-dev
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: tempconverter-frontend-dev
+        image: docker.io/kaynecherem/tempconverter:dev
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_USER
+          value: "user"
+        - name: DB_PASS
+          value: "password"
+        - name: DB_HOST
+          value: "tempconverter-db"
+        - name: DB_NAME
+          value: "tcdb"
+        - name: STUDENT
+          value: "Kalu Chinecherem"
+        - name: COLLEGE
+          value: "Algebra University"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempconverter-frontend-dev
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: tempconverter-frontend-dev
