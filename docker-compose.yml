@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  my-db:
+    image: mysql:8.0
+    env_file:
+      - config/.env
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  my-app:
+    image: kaynecherem/tempconverter:dev
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file:
+      - config/.env
+    environment:
+      DB_USER: ${MYSQL_USER}
+      DB_PASS: ${MYSQL_ROOT_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_HOST: my-db
+      STUDENT: Kalu Chinecherem
+      COLLEGE: Algebra University
+    depends_on:
+      - my-db
+
+volumes:
+  db-data:
