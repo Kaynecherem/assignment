@@ -13,16 +13,10 @@ services:
   my-app:
     image: kaynecherem/tempconverter:dev
     restart: always
-    expose:
-      - "5000"
     ports:
       - "5000:5000"
     env_file:
       - config/.env
-    environment:
-      DB_HOST: my-db
-      STUDENT: Kalu Chinecherem
-      COLLEGE: Algebra University
     depends_on:
       - my-db
 
