@@ -17,6 +17,13 @@ services:
       - "5000:5000"
     env_file:
       - config/.env
+    environment:
+      DB_USER: ${MYSQL_USER}
+      DB_PASS: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_HOST: my-db
+      STUDENT: Kalu Chinecherem
+      COLLEGE: Algebra University
     depends_on:
       - my-db
 
