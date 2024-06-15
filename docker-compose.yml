@@ -18,9 +18,6 @@ services:
     env_file:
       - config/.env
     environment:
-      DB_USER: ${MYSQL_USER}
-      DB_PASS: ${MYSQL_ROOT_PASSWORD}
-      DB_NAME: ${MYSQL_DATABASE}
       DB_HOST: my-db
       STUDENT: Kalu Chinecherem
       COLLEGE: Algebra University
